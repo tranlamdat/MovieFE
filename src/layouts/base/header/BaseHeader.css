@@ -1,0 +1,31 @@
+nav {
+  transition: 0.5s;
+}
+
+.navbar li {
+  position: relative;
+}
+
+.navbar ul li a::after {
+  content: "";
+  width: 0;
+  height: 2px;
+  background: var(--main-color);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: 0.4s all linear;
+}
+
+.navbar ul li a:hover::after,
+.navbar .active::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  background-color: unset !important;
+}
+
+span {
+  cursor: pointer;
+}

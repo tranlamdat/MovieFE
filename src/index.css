@@ -1,0 +1,53 @@
+/* Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Inter&family=Poppins:wght@200;300;400;500;600;700&display=swap");
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+* {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-padding-top: 2rem;
+  scroll-behavior: smooth;
+}
+
+/* Some Variable */
+:root {
+  --main-color: #ff2c1f;
+  --text-color: #020307;
+  --bg-color: #fff;
+}
+
+/* Custom Scroll Bar */
+html::-webkit-scrollbar {
+  width: 0.5rem;
+  background: var(--text-color);
+}
+
+html::-webkit-scrollbar-thumb {
+  background: var(--main-color);
+  border-radius: 5rem;
+}
+
+body {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+
+a {
+  text-decoration: none;
+}
+
+.logo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--bg-color);
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+}
+
+.logo .bx {
+  font-size: 24px;
+  color: var(--main-color);
+}
