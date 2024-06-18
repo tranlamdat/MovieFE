@@ -1,28 +1,10 @@
-import "react-multi-carousel/lib/styles.css";
 import BaseLayout from "../../layouts/base/BaseLayout";
 import "./HomePage.css";
 import Carousel from "react-multi-carousel";
 import MovieCard from "../../components/card/movie/MovieCard";
 import ContactForm from "../../components/form/contact/ContactForm";
-
-const responsive = {
-  superLargeDesktop: {
-    breakpoint: { max: 4000, min: 1200 },
-    items: 6,
-  },
-  desktop: {
-    breakpoint: { max: 1200, min: 992 },
-    items: 4,
-  },
-  tablet: {
-    breakpoint: { max: 992, min: 768 },
-    items: 2,
-  },
-  mobile: {
-    breakpoint: { max: 768, min: 0 },
-    items: 1,
-  },
-};
+import UseTop from "../../hooks/UseTop";
+import CarouselCard from "../../components/card/carousel/CarouselCard";
 
 const openingThisWeek = [
   {
@@ -171,6 +153,8 @@ const commingSoon = [
 ];
 
 const HomePage = () => {
+  UseTop();
+
   return (
     <BaseLayout>
       <main
@@ -216,7 +200,7 @@ const HomePage = () => {
                     Venom: Let There <br /> Be Carnage
                   </h1>
                   <a href="#" className="btn btn-danger">
-                    Book Now
+                    Watch Now
                   </a>
                 </div>
                 <a href="#" className="play">
@@ -231,7 +215,7 @@ const HomePage = () => {
                     Avengers: <br /> Infinity War
                   </h1>
                   <a href="#" className="btn btn-danger">
-                    Book Now
+                    Watch Now
                   </a>
                 </div>
                 <a href="#" className="play">
@@ -246,7 +230,7 @@ const HomePage = () => {
                     Spiderman: <br /> Far From Home
                   </h1>
                   <a href="#" className="btn btn-danger">
-                    Book Now
+                    Watch Now
                   </a>
                 </div>
                 <a href="#" className="play">
@@ -292,36 +276,7 @@ const HomePage = () => {
 
         <section className="container py-4 mt-5" id="coming">
           <h5 className="heading">Coming Soon</h5>
-          <Carousel
-            additionalTransfrom={0}
-            arrows
-            autoPlaySpeed={3000}
-            centerMode={false}
-            className="coming-container"
-            draggable
-            focusOnSelect={false}
-            infinite={false}
-            itemClass=""
-            keyBoardControl
-            minimumTouchDrag={80}
-            pauseOnHover
-            renderArrowsWhenDisabled={false}
-            renderButtonGroupOutside={false}
-            renderDotsOutside={false}
-            responsive={responsive}
-            rewind={false}
-            rewindWithAnimation={false}
-            rtl={false}
-            shouldResetAutoplay
-            showDots={false}
-            sliderClass=""
-            slidesToSlide={1}
-            swipeable
-          >
-            {commingSoon.map((movie) => (
-              <MovieCard key={movie.id} movie={movie}></MovieCard>
-            ))}
-          </Carousel>
+          <CarouselCard listItems={commingSoon}></CarouselCard>
         </section>
         <section className="container py-4 mt-5 newsletter" id="newsletter">
           <h5 className="heading">Contact Us</h5>

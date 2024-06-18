@@ -37,6 +37,7 @@
   color: var(--bg-color);
   transition: 0.2s all linear;
 }
+
 .heading {
   text-transform: uppercase;
   border-bottom: 1px solid var(--main-color);

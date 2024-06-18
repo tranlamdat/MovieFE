@@ -4,6 +4,7 @@ import "./index.css";
 import "boxicons/css/boxicons.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "react-multi-carousel/lib/styles.css";
 import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(

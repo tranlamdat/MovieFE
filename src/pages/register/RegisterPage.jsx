@@ -1,9 +1,12 @@
+import UseTop from "../../hooks/UseTop";
 import BaseLayout from "../../layouts/base/BaseLayout";
 
 const RegisterPage = () => {
+  UseTop();
+
   return (
     <BaseLayout>
-      <section className="vh-100">
+      <section className="">
         <div className="px-4 py-5 px-md-5 text-center text-lg-start">
           <div className="container">
             <div className="row gx-lg-5 align-items-center">
