@@ -85,6 +85,7 @@ const LoginPage = () => {
                             error.email ? "is-invalid" : ""
                           }`}
                           id="email"
+                          name="email"
                           placeholder="name@example.com"
                           value={formData.email}
                           onChange={handleChange}
@@ -104,6 +105,7 @@ const LoginPage = () => {
                             error.password ? "is-invalid" : ""
                           }`}
                           id="password"
+                          name="password"
                           placeholder="Password"
                           value={formData.password}
                           onChange={handleChange}
