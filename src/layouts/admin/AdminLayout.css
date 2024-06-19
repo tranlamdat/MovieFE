@@ -688,7 +688,7 @@ a:hover {
 
 .sidebar-nav .nav-link.collapsed {
   color: #899bbd;
-  background: #fff;
+  background: #212529;
 }
 
 .sidebar-nav .nav-link.collapsed i {
@@ -697,7 +697,7 @@ a:hover {
 
 .sidebar-nav .nav-link:hover {
   color: #dc3545;
-  background: #f6f9ff;
+  background: #6c757d;
 }
 
 .sidebar-nav .nav-link:hover i {
