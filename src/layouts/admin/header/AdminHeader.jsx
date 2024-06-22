@@ -2,7 +2,10 @@ import { Link } from "react-router-dom";
 
 const AdminHeader = ({ toggleSidebar }) => {
   return (
-    <header id="header" className="header fixed-top d-flex align-items-center text-bg-dark">
+    <header
+      id="header"
+      className="header fixed-top d-flex align-items-center text-bg-dark"
+    >
       <div className="d-flex align-items-center justify-content-between">
         <Link to="/admin/dashboard" className="logo d-flex align-items-center">
           <img src="/image/logo.png" alt="" />
@@ -40,8 +43,8 @@ const AdminHeader = ({ toggleSidebar }) => {
                   className="dropdown-item d-flex align-items-center"
                   to="/profile"
                 >
-                  <i className="bi bi-person"></i>
-                  <span>My Profile</span>
+                  <i className="bi bi-shield-lock"></i>
+                  <span>Change Password</span>
                 </Link>
               </li>
               <li>
@@ -63,6 +66,10 @@ const AdminHeader = ({ toggleSidebar }) => {
       </nav>
     </header>
   );
+};
+
+AdminHeader.propTypes = {
+  toggleSidebar: () => {},
 };
 
 export default AdminHeader;

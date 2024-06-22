@@ -29,24 +29,24 @@ const SidebarAdmin = () => {
     {
       name: "Genre",
       path: "/admin/genre",
-      icon: "bi bi-book",
+      icon: "bi bi-bookmark-star",
       isActive: false,
       roles: ["Coordinator", "Manager"],
     },
     {
       name: "Movie",
       path: "/admin/movie",
-      icon: "bi bi-person",
+      icon: "bi bi-film",
       isActive: false,
       role: "Administrator",
     },
-    {
-      name: "User",
-      path: "/admin/user",
-      icon: "bi bi-person",
-      isActive: false,
-      role: "Administrator",
-    },
+    // {
+    //   name: "User",
+    //   path: "/admin/user",
+    //   icon: "bi bi-person",
+    //   isActive: false,
+    //   role: "Administrator",
+    // },
   ]);
 
   useEffect(() => {

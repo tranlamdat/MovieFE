@@ -1,4 +1,4 @@
-import { useRoutes } from "react-router-dom";
+import { Navigate, useRoutes } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/login/LoginPage";
@@ -6,6 +6,9 @@ import RegisterPage from "./pages/register/RegisterPage";
 import MoviePage from "./pages/movie/MoviePage";
 import Dashboard from "./pages/admin/dashboard/Dashboard";
 import Actor from "./pages/admin/actor/Actor";
+import Director from "./pages/admin/director/Director";
+import Genre from "./pages/admin/genre/Genre";
+import AdminMovie from "./pages/admin/movie/Movie";
 
 function App() {
   const router = useRoutes([
@@ -29,12 +32,28 @@ function App() {
       path: "/admin",
       children: [
         {
+          path: "",
+          element: <Navigate to="/admin/dashboard" />,
+        },
+        {
           path: "dashboard",
           element: <Dashboard />,
         },
         {
           path: "actor",
           element: <Actor />,
+        },
+        {
+          path: "director",
+          element: <Director />,
+        },
+        {
+          path: "genre",
+          element: <Genre />,
+        },
+        {
+          path: "movie",
+          element: <AdminMovie />,
         },
       ],
     },
