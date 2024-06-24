@@ -3,6 +3,10 @@ import BaseLayout from "../../layouts/base/BaseLayout";
 import { useState } from "react";
 import * as yup from "yup";
 import UseTop from "../../hooks/UseTop";
+import authApi from "../../api/authApi";
+import authService from "../../services/AuthService";
+import handleError from "../../services/HandleErrors";
+import { Spinner } from "react-bootstrap";
 
 const LoginPage = () => {
   UseTop();
@@ -35,16 +39,15 @@ const LoginPage = () => {
       await schema.validate(formData, { abortEarly: false });
 
       setIsLoading(true);
-      console.log(formData);
-      // try {
-      //   const response = await userApi.login(formData);
-      //   authService.saveUser(response);
-      //   navigate("/");
-      // } catch (error) {
-      //   handleError.showError(error);
-      // } finally {
-      //   setIsLoading(false);
-      // }
+      try {
+        const response = await authApi.login(formData);
+        authService.saveUser(response);
+        navigate("/");
+      } catch (error) {
+        handleError.showError(error);
+      } finally {
+        setIsLoading(false);
+      }
     } catch (error) {
       const newError = {};
       error.inner.forEach((e) => {
@@ -143,7 +146,11 @@ const LoginPage = () => {
                           className="btn btn-lg btn-outline-danger btn-block px-5"
                           type="submit"
                         >
-                          Login
+                          {isLoading ? (
+                            <Spinner animation="border" variant="light" />
+                          ) : (
+                            "Login"
+                          )}
                         </button>
                       </div>
                     </form>

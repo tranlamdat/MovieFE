@@ -1,8 +1,82 @@
+import { useState } from "react";
 import UseTop from "../../hooks/UseTop";
 import BaseLayout from "../../layouts/base/BaseLayout";
+import * as yup from "yup";
+import { useNavigate } from "react-router-dom";
+import handleError from "../../services/HandleErrors";
+import authApi from "../../api/authApi";
+import { Spinner } from "react-bootstrap";
 
 const RegisterPage = () => {
   UseTop();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    termAndCondition: false,
+  });
+  const [error, setError] = useState({});
+
+  // Yup validation
+  const schema = yup.object().shape({
+    email: yup.string().email().required("Email is required"),
+    password: yup
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+    confirmPassword: yup
+      .string()
+      .required("Confirm Password is required")
+      .oneOf([yup.ref("password"), null], "Passwords must match"),
+    firstName: yup.string().required("First Name is required"),
+    lastName: yup.string().required("Last Name is required"),
+    termAndCondition: yup.boolean().oneOf([true], "You must accept the terms"),
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleCheckboxChange = (event) => {
+    setFormData({
+      ...formData,
+      termAndCondition: event.target.checked,
+    });
+  };
+
+  // Form
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await schema.validate(formData, { abortEarly: false });
+      setIsLoading(true);
+      try {
+        delete formData.confirmPassword;
+        delete formData.termAndCondition;
+
+        await authApi.register(formData);
+        navigate("/login");
+      } catch (error) {
+        handleError.showError(error);
+      } finally {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      const newError = {};
+      error.inner.forEach((e) => {
+        newError[e.path] = e.message;
+      });
+      setError(newError);
+    }
+  };
 
   return (
     <BaseLayout>
@@ -30,16 +104,28 @@ const RegisterPage = () => {
                       Sign up now
                     </h2>
 
-                    <form className="mb-4">
+                    <form
+                      className="mb-4 needs-validation"
+                      onSubmit={handleSubmit}
+                      noValidate
+                    >
                       <div className="row">
                         <div className="col mb-3">
                           <div className="form-floating">
                             <input
                               type="text"
-                              className="form-control"
+                              className={`form-control ${
+                                error.firstName ? "is-invalid" : ""
+                              }`}
                               id="firstName"
+                              name="firstName"
+                              value={formData.firstName}
+                              onChange={handleChange}
                               placeholder="First name"
                             />
+                            <div className="invalid-feedback">
+                              {error.firstName ? error.firstName : ""}
+                            </div>
                             <label
                               htmlFor="firstName"
                               className="text-secondary"
@@ -52,10 +138,18 @@ const RegisterPage = () => {
                           <div className="form-floating">
                             <input
                               type="text"
-                              className="form-control"
+                              className={`form-control ${
+                                error.lastName ? "is-invalid" : ""
+                              }`}
                               id="lastName"
+                              name="lastName"
+                              value={formData.lastName}
+                              onChange={handleChange}
                               placeholder="Last name"
                             />
+                            <div className="invalid-feedback">
+                              {error.lastName ? error.lastName : ""}
+                            </div>
                             <label
                               htmlFor="lastName"
                               className="text-secondary"
@@ -69,10 +163,18 @@ const RegisterPage = () => {
                       <div className="form-floating mb-3">
                         <input
                           type="email"
-                          className="form-control"
+                          className={`form-control ${
+                            error.email ? "is-invalid" : ""
+                          }`}
                           id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
                           placeholder="name@example.com"
                         />
+                        <div className="invalid-feedback">
+                          {error.email ? error.email : ""}
+                        </div>
                         <label htmlFor="email" className="text-secondary">
                           Email address
                         </label>
@@ -81,10 +183,18 @@ const RegisterPage = () => {
                       <div className="form-floating mb-3">
                         <input
                           type="password"
-                          className="form-control"
+                          className={`form-control ${
+                            error.password ? "is-invalid" : ""
+                          }`}
                           id="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
                           placeholder="Password"
                         />
+                        <div className="invalid-feedback">
+                          {error.password ? error.password : ""}
+                        </div>
                         <label htmlFor="password" className="text-secondary">
                           Password
                         </label>
@@ -93,10 +203,18 @@ const RegisterPage = () => {
                       <div className="form-floating mb-3">
                         <input
                           type="password"
-                          className="form-control"
+                          className={`form-control ${
+                            error.confirmPassword ? "is-invalid" : ""
+                          }`}
                           id="confirmPassword"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
                           placeholder="Confirm password"
                         />
+                        <div className="invalid-feedback">
+                          {error.confirmPassword ? error.confirmPassword : ""}
+                        </div>
                         <label
                           htmlFor="confirmPassword"
                           className="text-secondary"
@@ -105,15 +223,20 @@ const RegisterPage = () => {
                         </label>
                       </div>
 
-                      <div className="form-check d-flex justify-content-start mb-5">
+                      <div className="form-check mb-5">
                         <input
-                          className="form-check-input me-2"
+                          className={`form-check-input me-2 ${
+                            error.termAndCondition ? "is-invalid" : ""
+                          }`}
                           type="checkbox"
-                          id="form2Example33"
+                          id="termAndCondition"
+                          name="termAndCondition"
+                          value={formData.termAndCondition}
+                          onChange={handleCheckboxChange}
                         />
                         <label
-                          className="form-check-label"
-                          htmlFor="form2Example33"
+                          className="form-check-label text-reset"
+                          htmlFor="termAndCondition"
                         >
                           I accept
                           <a href="#!" className="link-danger">
@@ -122,6 +245,9 @@ const RegisterPage = () => {
                           </a>
                           of this privacy statement.
                         </label>
+                        <div className="invalid-feedback">
+                          {error.termAndCondition ? error.termAndCondition : ""}
+                        </div>
                       </div>
 
                       <div className="d-grid">
@@ -129,7 +255,11 @@ const RegisterPage = () => {
                           className="btn btn-lg btn-danger btn-block px-5"
                           type="submit"
                         >
-                          Sign up
+                          {isLoading ? (
+                            <Spinner animation="border" variant="light" />
+                          ) : (
+                            "Sign up"
+                          )}
                         </button>
                       </div>
                     </form>

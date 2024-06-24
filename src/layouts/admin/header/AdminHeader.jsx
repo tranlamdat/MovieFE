@@ -1,6 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import swalService from "../../../services/SwalService";
+import authService from "../../../services/AuthService";
 
 const AdminHeader = ({ toggleSidebar }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    swalService.confirmToHandle(
+      "Are you sure you want to logout?",
+      "warning",
+      () => {
+        authService.logout();
+        navigate("/");
+      }
+    );
+  };
+
   return (
     <header
       id="header"
@@ -55,6 +70,7 @@ const AdminHeader = ({ toggleSidebar }) => {
                 <a
                   className="dropdown-item d-flex align-items-center"
                   style={{ cursor: "pointer" }}
+                  onClick={handleLogout}
                 >
                   <i className="bi bi-box-arrow-right"></i>
                   <span>Sign Out</span>

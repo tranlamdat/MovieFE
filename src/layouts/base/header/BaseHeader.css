@@ -22,6 +22,10 @@ nav {
   width: 100%;
 }
 
+.navbar ul li .dropdown-item:hover::after {
+  width: 0;
+}
+
 .nav-link.active {
   background-color: unset !important;
 }

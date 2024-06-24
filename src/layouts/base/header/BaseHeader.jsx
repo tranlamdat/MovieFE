@@ -1,11 +1,34 @@
 import { useEffect, useState } from "react";
 import "./BaseHeader.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import authService from "../../../services/AuthService";
+import { Image } from "react-bootstrap";
+import swalService from "../../../services/SwalService";
 
 const BaseHeader = () => {
+  const [userData, setUserData] = useState(null);
   const [isShadow, setIsShadow] = useState(false);
+  const navigate = useNavigate();
+
+  const isAuthenticated = () => {
+    return authService.isLogin();
+  };
+
+  const handleLogout = () => {
+    swalService.confirmToHandle(
+      "Are you sure you want to logout?",
+      "warning",
+      () => {
+        authService.logout();
+        navigate("/");
+      }
+    );
+  };
 
   useEffect(() => {
+    const user = authService.getUserData();
+    setUserData(user);
+
     const handleScroll = () => {
       setIsShadow(window.scrollY > 0);
     };
@@ -77,12 +100,66 @@ const BaseHeader = () => {
                 </li>
               </ul>
               <div className="mt-5 mt-lg-0">
-                <Link to="/login" className="btn btn-outline-light">
-                  Login
-                </Link>
-                <Link to="/sign-up" className="btn btn-danger ms-2">
-                  Sign up
-                </Link>
+                {isAuthenticated() ? (
+                  <>
+                    <div className="btn-group dropstart">
+                      <button
+                        type="button"
+                        className="btn btn-dark dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <Image
+                          src="/img/default-avatar-1.png"
+                          width={30}
+                          height={30}
+                          roundedCircle
+                        />
+                      </button>
+                      <ul className="dropdown-menu">
+                        <li>
+                          <a className="dropdown-item" href="#">
+                            Hi {userData?.firstName}
+                          </a>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" to="/profile">
+                            My Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" to="/change-password">
+                            Change Password
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                        <li>
+                          <a
+                            className="dropdown-item"
+                            style={{ cursor: "pointer" }}
+                            onClick={handleLogout}
+                          >
+                            Logout
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" className="btn btn-outline-light">
+                      Login
+                    </Link>
+                    <Link to="/sign-up" className="btn btn-danger ms-2">
+                      Sign up
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

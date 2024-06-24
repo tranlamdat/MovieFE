@@ -1,10 +1,11 @@
 import BaseLayout from "../../layouts/base/BaseLayout";
 import "./HomePage.css";
-import Carousel from "react-multi-carousel";
 import MovieCard from "../../components/card/movie/MovieCard";
 import ContactForm from "../../components/form/contact/ContactForm";
 import UseTop from "../../hooks/UseTop";
 import CarouselCard from "../../components/card/carousel/CarouselCard";
+import authService from "../../services/AuthService";
+import { Navigate } from "react-router-dom";
 
 const openingThisWeek = [
   {
@@ -154,6 +155,18 @@ const commingSoon = [
 
 const HomePage = () => {
   UseTop();
+
+  const isAuthenticated = () => {
+    return authService.isLogin();
+  };
+
+  const isAdmin = () => {
+    return authService.getUserRole() === "Admin";
+  };
+
+  if (isAuthenticated() && isAdmin()) {
+    return <Navigate to="/admin/dashboard" />;
+  }
 
   return (
     <BaseLayout>
