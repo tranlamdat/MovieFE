@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import "./AdminLayout.css";
 import AdminHeader from "./header/AdminHeader";
-import { useNavigate } from "react-router-dom";
 import SidebarAdmin from "./sidebar/SidebarAdmin";
+import PropTypes from "prop-types";
+import AdminProtected from "./AdminProtected";
 
 const AdminLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  //   const [userData, setUserData] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // const user = authService.getUserData();
-    // setUserData(user);
-
     // Check initial screen width
     if (window.innerWidth < 1200) {
       setIsSidebarOpen(false);
@@ -40,29 +36,24 @@ const AdminLayout = ({ children }) => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  //   const handleLogout = () => {
-  //     swalService.confirmToHandle(
-  //       "Are you sure you want to logout?",
-  //       "warning",
-  //       () => {
-  //         authService.logout();
-  //         navigate("/");
-  //       }
-  //     );
-  //   };
-
   return (
-    <div className="container-fluid">
-      <AdminHeader toggleSidebar={toggleSidebar} />
-      {isSidebarOpen && <SidebarAdmin />}
-      <main
-        id="main"
-        className={`${isSidebarOpen ? "" : "main-sidebar-closed"}`}
-      >
-        {children}
-      </main>
-    </div>
+    <AdminProtected>
+      <div className="container-fluid">
+        <AdminHeader toggleSidebar={toggleSidebar} />
+        {isSidebarOpen && <SidebarAdmin />}
+        <main
+          id="main"
+          className={`${isSidebarOpen ? "" : "main-sidebar-closed"}`}
+        >
+          {children}
+        </main>
+      </div>
+    </AdminProtected>
   );
+};
+
+AdminLayout.propTypes = {
+  children: PropTypes.node,
 };
 
 export default AdminLayout;
