@@ -100,12 +100,12 @@ const Genre = () => {
       setIsLoading(true);
       try {
         if (formData.genreId) {
-          // Update director
+          // Update genre
           formData.dateUpdated = new Date();
           const response = await genreApi.Update(formData);
           setGenres((previousState) => {
-            return previousState.map((director) => {
-              if (director.genreId === formData.genreId) {
+            return previousState.map((genre) => {
+              if (genre.genreId === formData.genreId) {
                 response.dateCreated = formatDateTime.toDateTimeString(
                   response.dateCreated
                 );
@@ -114,11 +114,11 @@ const Genre = () => {
                 );
                 return response;
               }
-              return director;
+              return genre;
             });
           });
         } else {
-          // Add new director
+          // Add new genre
           formData.dateCreated = new Date();
           formData.dateUpdated = new Date();
           const response = await genreApi.AddNew(formData);

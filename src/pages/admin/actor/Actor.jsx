@@ -133,7 +133,7 @@ const Actor = () => {
           setActors((previousState) => {
             return previousState.map((actor) => {
               if (actor.actorId === formData.actorId) {
-                response.doB = formatDateTime.toDateString(response.doB);
+                response.doB = formatDateTime.toBirthdayString(response.doB);
                 response.dateCreated = formatDateTime.toDateTimeString(
                   response.dateCreated
                 );
@@ -151,7 +151,7 @@ const Actor = () => {
           formData.dateUpdated = new Date();
           const response = await actorApi.AddNew(formData);
 
-          response.doB = formatDateTime.toDateString(response.doB);
+          response.doB = formatDateTime.toBirthdayString(response.doB);
           response.dateCreated = formatDateTime.toDateTimeString(
             response.dateCreated
           );
@@ -262,7 +262,7 @@ const Actor = () => {
 
         // Format date
         allActors.forEach((res) => {
-          res.doB = formatDateTime.toDateString(res.doB);
+          res.doB = formatDateTime.toBirthdayString(res.doB);
           res.dateCreated = formatDateTime.toDateTimeString(res.dateCreated);
           res.dateUpdated = formatDateTime.toDateTimeString(res.dateUpdated);
         });

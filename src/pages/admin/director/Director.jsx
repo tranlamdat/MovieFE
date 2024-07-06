@@ -133,7 +133,7 @@ const Director = () => {
           setDirectors((previousState) => {
             return previousState.map((director) => {
               if (director.directorId === formData.directorId) {
-                response.doB = formatDateTime.toDateString(response.doB);
+                response.doB = formatDateTime.toBirthdayString(response.doB);
                 response.dateCreated = formatDateTime.toDateTimeString(
                   response.dateCreated
                 );
@@ -151,7 +151,7 @@ const Director = () => {
           formData.dateUpdated = new Date();
           const response = await directorApi.AddNew(formData);
 
-          response.doB = formatDateTime.toDateString(response.doB);
+          response.doB = formatDateTime.toBirthdayString(response.doB);
           response.dateCreated = formatDateTime.toDateTimeString(
             response.dateCreated
           );
@@ -262,7 +262,7 @@ const Director = () => {
 
         // Format date
         allDirectors.forEach((res) => {
-          res.doB = formatDateTime.toDateString(res.doB);
+          res.doB = formatDateTime.toBirthdayString(res.doB);
           res.dateCreated = formatDateTime.toDateTimeString(res.dateCreated);
           res.dateUpdated = formatDateTime.toDateTimeString(res.dateUpdated);
         });
