@@ -17,7 +17,7 @@ class ActorApi {
   };
 
   Update = (actor) => {
-    const url = `/api/actors/${actor.actorId}`;
+    const url = `/api/actors/${actor.get('actorId')}`;
     return axiosClient.put(url, actor);
   };
 

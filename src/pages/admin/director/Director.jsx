@@ -48,6 +48,17 @@ const Director = () => {
       sortable: true,
     },
     {
+      name: "Avatar",
+      cell: (row) => (
+        <img
+          src={row.avatarUrl != "" ? row.avatarUrl : "/img/default-avatar.png"}
+          alt="avatar"
+          style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          className="my-2"
+        />
+      ),
+    },
+    {
       name: "Date Created",
       selector: (row) => row.dateCreated,
       sortable: true,

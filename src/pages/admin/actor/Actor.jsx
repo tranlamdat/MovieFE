@@ -21,10 +21,14 @@ const Actor = () => {
     name: "",
     doB: "",
     nationality: "",
+    avatarUrl: "",
+    publicId: "",
+    newAvatar: null,
     dateCreated: "",
     dateUpdated: "",
   });
   const [error, setError] = useState({});
+  const [previewImage, setPreviewImage] = useState("/img/default-avatar.png");
 
   const columns = [
     {
@@ -46,6 +50,17 @@ const Actor = () => {
       name: "Nationality",
       selector: (row) => row.nationality,
       sortable: true,
+    },
+    {
+      name: "Avatar",
+      cell: (row) => (
+        <img
+          src={row.avatarUrl != "" ? row.avatarUrl : "/img/default-avatar.png"}
+          alt="avatar"
+          style={{ width: "50px", height: "50px", objectFit: "cover" }}
+          className="my-2"
+        />
+      ),
     },
     {
       name: "Date Created",
@@ -86,10 +101,14 @@ const Actor = () => {
       name: "",
       doB: "",
       nationality: "",
+      avatarUrl: "",
+      publicId: "",
+      newAvatar: null,
       dateCreated: "",
       dateUpdated: "",
     });
   };
+
   const handleShow = () => {
     setShow(true);
     setModelTitle("Add new Actor");
@@ -119,6 +138,21 @@ const Actor = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    setFormData({
+      ...formData,
+      newAvatar: file,
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -126,10 +160,20 @@ const Actor = () => {
 
       setIsLoading(true);
       try {
+        const formDataSubmit = new FormData();
+        formDataSubmit.append("name", formData.name);
+        formDataSubmit.append("doB", formData.doB);
+        formDataSubmit.append("nationality", formData.nationality);
+        formDataSubmit.append("avatarUrl", formData.newAvatar);
+        formDataSubmit.append("publicId", formData.publicId);
+        formDataSubmit.append("newAvatar", formData.newAvatar);
+        formDataSubmit.append("dateCreated", new Date().toISOString());
+
         if (formData.actorId) {
           // Update actor
-          formData.dateUpdated = new Date();
-          const response = await actorApi.Update(formData);
+          formDataSubmit.append("actorId", formData.actorId);
+          formDataSubmit.append("dateUpdated", new Date().toISOString());
+          const response = await actorApi.Update(formDataSubmit);
           setActors((previousState) => {
             return previousState.map((actor) => {
               if (actor.actorId === formData.actorId) {
@@ -147,9 +191,8 @@ const Actor = () => {
           });
         } else {
           // Add new actor
-          formData.dateCreated = new Date();
-          formData.dateUpdated = new Date();
-          const response = await actorApi.AddNew(formData);
+          formDataSubmit.append("dateUpdated", new Date().toISOString());
+          const response = await actorApi.AddNew(formDataSubmit);
 
           response.doB = formatDateTime.toBirthdayString(response.doB);
           response.dateCreated = formatDateTime.toDateTimeString(
@@ -189,6 +232,8 @@ const Actor = () => {
         actorId: actor.actorId,
         name: actor.name,
         doB: formatDateTime.toBirthdayString(actor.doB),
+        avatarUrl: actor.avatarUrl,
+        publicId: actor.publicId,
         nationality: actor.nationality,
         dateCreated: actor.dateCreated,
         dateUpdated: actor.dateUpdated,
@@ -325,6 +370,25 @@ const Actor = () => {
               <Modal.Title>{modelTitle}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+              <div className="mb-3 text-center">
+                <label>
+                  <img
+                    src={previewImage}
+                    width={100}
+                    height={100}
+                    className="rounded-circle mb-2"
+                    alt="Preview"
+                  />
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  name="newAvatar"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
+
               <FloatingLabel
                 controlId="floatingFullName"
                 label="Full name"
