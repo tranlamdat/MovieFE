@@ -164,7 +164,7 @@ const Actor = () => {
         formDataSubmit.append("name", formData.name);
         formDataSubmit.append("doB", formData.doB);
         formDataSubmit.append("nationality", formData.nationality);
-        formDataSubmit.append("avatarUrl", formData.newAvatar);
+        formDataSubmit.append("avatarUrl", formData.avatarUrl);
         formDataSubmit.append("publicId", formData.publicId);
         formDataSubmit.append("newAvatar", formData.newAvatar);
         formDataSubmit.append("dateCreated", new Date().toISOString());
@@ -224,7 +224,12 @@ const Actor = () => {
 
   const handleEdit = async (id) => {
     const actor = await actorApi.GetOne(id);
-    console.log(actor);
+
+    if (actor.avatarUrl) {
+      setPreviewImage(actor.avatarUrl);
+    } else {
+      setPreviewImage("/image/default-avatar.png");
+    }
 
     setFormData((previousState) => {
       return {
@@ -232,9 +237,9 @@ const Actor = () => {
         actorId: actor.actorId,
         name: actor.name,
         doB: formatDateTime.toBirthdayString(actor.doB),
+        nationality: actor.nationality,
         avatarUrl: actor.avatarUrl,
         publicId: actor.publicId,
-        nationality: actor.nationality,
         dateCreated: actor.dateCreated,
         dateUpdated: actor.dateUpdated,
       };

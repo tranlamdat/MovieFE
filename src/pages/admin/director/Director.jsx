@@ -21,10 +21,14 @@ const Director = () => {
     name: "",
     doB: "",
     nationality: "",
+    avatarUrl: "",
+    publicId: "",
+    newAvatar: null,
     dateCreated: "",
     dateUpdated: "",
   });
   const [error, setError] = useState({});
+  const [previewImage, setPreviewImage] = useState("/img/default-avatar.png");
 
   const columns = [
     {
@@ -130,6 +134,21 @@ const Director = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    setFormData({
+      ...formData,
+      newAvatar: file,
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -137,10 +156,20 @@ const Director = () => {
 
       setIsLoading(true);
       try {
+        const formDataSubmit = new FormData();
+        formDataSubmit.append("name", formData.name);
+        formDataSubmit.append("doB", formData.doB);
+        formDataSubmit.append("nationality", formData.nationality);
+        formDataSubmit.append("avatarUrl", formData.avatarUrl);
+        formDataSubmit.append("publicId", formData.publicId);
+        formDataSubmit.append("newAvatar", formData.newAvatar);
+        formDataSubmit.append("dateCreated", new Date().toISOString());
+
         if (formData.directorId) {
           // Update director
-          formData.dateUpdated = new Date();
-          const response = await directorApi.Update(formData);
+          formDataSubmit.append("directorId", formData.directorId);
+          formDataSubmit.append("dateUpdated", new Date().toISOString());
+          const response = await directorApi.Update(formDataSubmit);
           setDirectors((previousState) => {
             return previousState.map((director) => {
               if (director.directorId === formData.directorId) {
@@ -158,9 +187,8 @@ const Director = () => {
           });
         } else {
           // Add new director
-          formData.dateCreated = new Date();
-          formData.dateUpdated = new Date();
-          const response = await directorApi.AddNew(formData);
+          formDataSubmit.append("dateUpdated", new Date().toISOString());
+          const response = await directorApi.AddNew(formDataSubmit);
 
           response.doB = formatDateTime.toBirthdayString(response.doB);
           response.dateCreated = formatDateTime.toDateTimeString(
@@ -192,7 +220,12 @@ const Director = () => {
 
   const handleEdit = async (id) => {
     const director = await directorApi.GetOne(id);
-    console.log(director);
+
+    if (director.avatarUrl) {
+      setPreviewImage(director.avatarUrl);
+    } else {
+      setPreviewImage("/image/default-avatar.png");
+    }
 
     setFormData((previousState) => {
       return {
@@ -201,6 +234,8 @@ const Director = () => {
         name: director.name,
         doB: formatDateTime.toBirthdayString(director.doB),
         nationality: director.nationality,
+        avatarUrl: director.avatarUrl,
+        publicId: director.publicId,
         dateCreated: director.dateCreated,
         dateUpdated: director.dateUpdated,
       };
@@ -336,6 +371,25 @@ const Director = () => {
               <Modal.Title>{modelTitle}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+              <div className="mb-3 text-center">
+                <label>
+                  <img
+                    src={previewImage}
+                    width={100}
+                    height={100}
+                    className="rounded-circle mb-2"
+                    alt="Preview"
+                  />
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  name="newAvatar"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
+
               <FloatingLabel
                 controlId="floatingFullName"
                 label="Full name"

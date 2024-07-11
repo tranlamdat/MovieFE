@@ -51,3 +51,9 @@ a {
   font-size: 24px;
   color: var(--main-color);
 }
+
+.spinner-border {
+  width: 18px;
+  height: 18px;
+  border-width: 3px;
+}

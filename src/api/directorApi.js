@@ -17,7 +17,7 @@ class DirectorApi {
   };
 
   Update = (director) => {
-    const url = `/api/directors/${director.directorId}`;
+    const url = `/api/directors/${director.get('directorId')}`;
     return axiosClient.put(url, director);
   };
 

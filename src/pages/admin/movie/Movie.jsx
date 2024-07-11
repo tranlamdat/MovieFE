@@ -359,14 +359,14 @@ const AdminMovie = () => {
 
         <Modal
           show={show}
-          fullscreen={true}
+          size="xl"
           onHide={handleClose}
           backdrop="static"
           keyboard={false}
           centered
         >
           <Form
-            className="vh-100 bg-dark text-white needs-validation"
+            className="bg-dark text-white needs-validation"
             noValidate
             onSubmit={handleSubmit}
           >
@@ -393,7 +393,9 @@ const AdminMovie = () => {
                       {error.title}
                     </Form.Control.Feedback>
                   </FloatingLabel>
+                </div>
 
+                <div className="col-4">
                   <FloatingLabel
                     controlId="floatingRealeseDate"
                     label="Realese Date"
@@ -411,22 +413,9 @@ const AdminMovie = () => {
                       {error.releaseDate}
                     </Form.Control.Feedback>
                   </FloatingLabel>
+                </div>
 
-                  <FloatingLabel controlId="floatingDescription" label="Description" className="mb-3 text-secondary">
-                    <Form.Control
-                      as="textarea"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      isInvalid={error.description}
-                      placeholder="Leave a description here"
-                      style={{ height: '100px' }}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {error.description}
-                    </Form.Control.Feedback>
-                  </FloatingLabel>
-
+                <div className="col-4">
                   <FloatingLabel
                     controlId="floatingDuration"
                     label="Duration"
@@ -444,7 +433,9 @@ const AdminMovie = () => {
                       {error.duration}
                     </Form.Control.Feedback>
                   </FloatingLabel>
+                </div>
 
+                <div className="col-4">
                   <FloatingLabel
                     controlId="floatingNational"
                     label="National"
@@ -468,7 +459,9 @@ const AdminMovie = () => {
                       {error.national}
                     </Form.Control.Feedback>
                   </FloatingLabel>
+                </div>
 
+                <div className="col-4">
                   <FloatingLabel
                     controlId="floatingGenre"
                     label="Genre"
@@ -492,7 +485,9 @@ const AdminMovie = () => {
                       {error.genreId}
                     </Form.Control.Feedback>
                   </FloatingLabel>
+                </div>
 
+                <div className="col-4">
                   <FloatingLabel
                     controlId="floatingDirector"
                     label="Director"
@@ -517,13 +512,22 @@ const AdminMovie = () => {
                     </Form.Control.Feedback>
                   </FloatingLabel>
                 </div>
-                <div className="col-4">
-
-                </div>
-                <div className="col-4">
-
-                </div>
               </div>
+
+              <FloatingLabel controlId="floatingDescription" label="Description" className="mb-3 text-secondary">
+                <Form.Control
+                  as="textarea"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  isInvalid={error.description}
+                  placeholder="Leave a description here"
+                  style={{ height: '150px' }}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {error.description}
+                </Form.Control.Feedback>
+              </FloatingLabel>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
