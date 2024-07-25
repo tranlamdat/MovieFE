@@ -25,6 +25,11 @@ class ActorApi {
     const url = `/api/actors/${id}`;
     return axiosClient.delete(url);
   };
+
+  Search = (query) => {
+    const url = `/api/actors/search?name=${query}`;
+    return axiosClient.get(url);
+  };
 }
 
 const actorApi = new ActorApi();

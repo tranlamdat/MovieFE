@@ -1,4 +1,5 @@
 import { Button, FloatingLabel, Form, Modal, Spinner } from "react-bootstrap";
+import "./Movie.css";
 import AdminLayout from "../../../layouts/admin/AdminLayout";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
@@ -10,6 +11,10 @@ import DynamicDataTable from "../../../components/table/DynamicDataTable";
 import countryApi from "../../../api/countryApi";
 import genreApi from "../../../api/genreApi";
 import directorApi from "../../../api/directorApi";
+import SearchForm from "../../../components/form/search/SearchForm";
+import movieActorApi from "../../../api/movieActorApi";
+import { MEDIA_TYPE } from "../../../utils/constant";
+import movieMediaApi from "../../../api/movieMediaApi";
 
 const AdminMovie = () => {
   const today = new Date();
@@ -35,9 +40,17 @@ const AdminMovie = () => {
     national: "",
     genreId: "",
     directorId: "",
+    listActors: [],
+    posterFile: null,
+    bannerFile: null,
+    videoFile: null,
     dateCreated: "",
     dateUpdated: "",
   });
+  const [previewPoster, setPreviewPoster] = useState("");
+  const [previewBanner, setPreviewBanner] = useState("");
+  const [previewVideo, setPreviewVideo] = useState("");
+  const [listActors, setListActors] = useState([]);
   const [error, setError] = useState({});
 
   const columns = [
@@ -114,6 +127,7 @@ const AdminMovie = () => {
   const handleClose = () => {
     setShow(false);
     setError({});
+    setListActors([]);
     setFormData({
       movieId: "",
       title: "",
@@ -123,9 +137,17 @@ const AdminMovie = () => {
       national: "",
       genreId: "",
       directorId: "",
+      listActors: [],
+      posterFile: null,
+      bannerFile: null,
+      videoFile: null,
       dateCreated: "",
       dateUpdated: "",
     });
+    setModelTitle("");
+    setPreviewPoster("");
+    setPreviewBanner("");
+    setPreviewVideo("");
   };
   const handleShow = () => {
     setShow(true);
@@ -153,6 +175,10 @@ const AdminMovie = () => {
     national: yup.string().required("National is required"),
     genreId: yup.string().required("Genre is required"),
     directorId: yup.string().required("Director is required"),
+    listActors: yup.array().min(2, "At least 2 actors is required"),
+    posterFile: yup.mixed().required("Poster is required"),
+    bannerFile: yup.mixed().required("Banner is required"),
+    videoFile: yup.mixed().required("Video is required"),
   });
 
   const handleChange = (event) => {
@@ -163,59 +189,139 @@ const AdminMovie = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (e.target.name === "posterFile") {
+        delete error.posterFile;
+        setPreviewPoster(reader.result);
+      } else if (e.target.name === "bannerFile") {
+        delete error.bannerFile;
+        setPreviewBanner(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    setFormData({
+      ...formData,
+      [e.target.name]: file,
+    });
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      delete error.videoFile;
+      setPreviewVideo(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    setFormData({
+      ...formData,
+      [e.target.name]: file,
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      setFormData({
+        ...formData,
+        listActors: listActors,
+      })
+
       await schema.validate(formData, { abortEarly: false });
 
       setIsLoading(true);
 
-      console.log(formData);
-      // try {
-      //   if (formData.movieId) {
-      //     // Update movie
-      //     formData.dateUpdated = new Date();
-      //     const response = await movieApi.Update(formData);
-      //     setMovies((previousState) => {
-      //       return previousState.map((movie) => {
-      //         if (movie.movieId === formData.movieId) {
-      //           response.releaseDate = formatDateTime.toDateString(response.releaseDate);
-      //           response.dateCreated = formatDateTime.toDateTimeString(
-      //             response.dateCreated
-      //           );
-      //           response.dateUpdated = formatDateTime.toDateTimeString(
-      //             response.dateUpdated
-      //           );
-      //           return response;
-      //         }
-      //         return movie;
-      //       });
-      //     });
-      //   } else {
-      //     // Add new movie
-      //     formData.dateCreated = new Date();
-      //     formData.dateUpdated = new Date();
-      //     const response = await movieApi.AddNew(formData);
+      try {
+        if (formData.movieId) {
+          // Update movie
+          formData.dateUpdated = new Date();
+          const response = await movieApi.Update(formData);
+          setMovies((previousState) => {
+            return previousState.map((movie) => {
+              if (movie.movieId === formData.movieId) {
+                response.releaseDate = formatDateTime.toDateString(response.releaseDate);
+                response.dateCreated = formatDateTime.toDateTimeString(
+                  response.dateCreated
+                );
+                response.dateUpdated = formatDateTime.toDateTimeString(
+                  response.dateUpdated
+                );
+                return response;
+              }
+              return movie;
+            });
+          });
+        } else {
+          // Add new movie
+          formData.dateCreated = new Date();
+          formData.dateUpdated = new Date();
 
-      //     response.releaseDate = formatDateTime.toDateString(response.releaseDate);
-      //     response.dateCreated = formatDateTime.toDateTimeString(
-      //       response.dateCreated
-      //     );
-      //     response.dateUpdated = formatDateTime.toDateTimeString(
-      //       response.dateUpdated
-      //     );
+          const response = await movieApi.AddNew(formData);
+          const movieId = response.movieId;
 
-      //     setMovies((previousState) => {
-      //       return [response, ...previousState];
-      //     });
-      //   }
+          // Add new movie actors
+          const listMovieActors = formData.listActors.map((actor) => {
+            return {
+              movieId: movieId,
+              actorId: actor.actorId,
+              characterName: actor.characterName,
+              dateCreated: new Date(),
+              dateUpdated: new Date(),
+            };
+          });
 
-      //   handleClose();
-      // } catch (error) {
-      //   handleError.showError(error);
-      // } finally {
-      //   setIsLoading(false);
-      // }
+          await Promise.all(
+            listMovieActors.map(async (movieActor) => {
+              return await movieActorApi.AddNew(movieActor);
+            })
+          );
+
+          // Add files
+          const posterFormData = new FormData();
+          const bannerFormData = new FormData();
+          const videoFormData = new FormData();
+
+          posterFormData.append("movieId", movieId);
+          posterFormData.append("type", MEDIA_TYPE.POSTER);
+          posterFormData.append("fileUpload", formData.posterFile);
+
+          bannerFormData.append("movieId", movieId);
+          bannerFormData.append("type", MEDIA_TYPE.BANNER);
+          bannerFormData.append("fileUpload", formData.bannerFile);
+
+          videoFormData.append("movieId", movieId);
+          videoFormData.append("type", MEDIA_TYPE.VIDEO);
+          videoFormData.append("fileUpload", formData.videoFile);
+
+          await Promise.all([
+            movieMediaApi.AddNew(posterFormData),
+            movieMediaApi.AddNew(bannerFormData),
+            movieMediaApi.AddNew(videoFormData),
+          ]);
+        }
+
+        const allMovies = await movieApi.getAll();
+        // Format date
+        allMovies.forEach((res) => {
+          res.releaseDate = formatDateTime.toDateString(res.releaseDate);
+          res.dateCreated = formatDateTime.toDateTimeString(res.dateCreated);
+          res.dateUpdated = formatDateTime.toDateTimeString(res.dateUpdated);
+        });
+        setMovies(allMovies);
+
+        handleClose();
+      } catch (error) {
+        handleError.showError(error);
+      } finally {
+        setIsLoading(false);
+      }
     } catch (error) {
       const newError = {};
       error.inner.forEach((e) => {
@@ -229,6 +335,23 @@ const AdminMovie = () => {
     const movie = await movieApi.GetOne(id);
     console.log(movie);
 
+    const listMovieActors = movie.movieActors.map((movieActor) => {
+      return {
+        ...movieActor.actor,
+        characterName: movieActor.characterName,
+      };
+    })
+    setListActors(listMovieActors);
+
+    const posterFile = movie.movieMedias.find((media) => media.type === MEDIA_TYPE.POSTER);
+    setPreviewPoster(posterFile ? posterFile.url : "");
+
+    const bannerFile = movie.movieMedias.find((media) => media.type === MEDIA_TYPE.BANNER);
+    setPreviewBanner(bannerFile ? bannerFile.url : "");
+
+    const videoFile = movie.movieMedias.find((media) => media.type === MEDIA_TYPE.VIDEO);
+    setPreviewVideo(videoFile ? videoFile.url : "");
+
     setFormData((previousState) => {
       return {
         ...previousState,
@@ -238,8 +361,9 @@ const AdminMovie = () => {
         description: movie.description,
         duration: movie.duration,
         national: movie.national,
-        genreId: movie.genreId,
-        directorId: movie.directorId,
+        genreId: movie.genre.genreId,
+        directorId: movie.director.directorId,
+        listActors: listMovieActors,
         dateCreated: movie.dateCreated,
         dateUpdated: movie.dateUpdated,
       };
@@ -308,8 +432,6 @@ const AdminMovie = () => {
           res.dateCreated = formatDateTime.toDateTimeString(res.dateCreated);
           res.dateUpdated = formatDateTime.toDateTimeString(res.dateUpdated);
         });
-
-        console.log(allMovies);
 
         // Set movies
         setMovies(allMovies);
@@ -528,6 +650,62 @@ const AdminMovie = () => {
                   {error.description}
                 </Form.Control.Feedback>
               </FloatingLabel>
+
+              <div className="mt-4">
+                <h4>Search Actor</h4>
+                <SearchForm errorListActors={error.listActors} listActors={listActors} setListActors={setListActors}></SearchForm>
+                <Form.Control.Feedback type="invalid">
+                  {error.listActors}
+                </Form.Control.Feedback>
+              </div>
+
+              <div className="mt-4">
+                <h4>Media</h4>
+
+                <div className="row">
+                  <Form.Group className="col-12 col-md-4 mb-3">
+                    <Form.Label>Poster</Form.Label>
+                    <Form.Control type="file" id="posterFile" name="posterFile" accept="image/*" isInvalid={error.posterFile} onChange={handleImageChange} />
+                    {/* Preview image */}
+                    {previewPoster && (
+                      <div className="text-center mt-3">
+                        <img src={previewPoster} alt="poster" className="w-100 h-auto" />
+                      </div>
+                    )}
+                    <Form.Control.Feedback type="invalid">
+                      {error.posterFile}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group className="col-12 col-md-4 mb-3">
+                    <Form.Label>Banner</Form.Label>
+                    <Form.Control type="file" id="bannerFile" name="bannerFile" accept="image/*" isInvalid={error.bannerFile} onChange={handleImageChange} />
+                    {/* Preview image */}
+                    {previewBanner && (
+                      <div className="text-center mt-3">
+                        <img src={previewBanner} alt="poster" className="w-100" />
+                      </div>
+                    )}
+                    <Form.Control.Feedback type="invalid">
+                      {error.bannerFile}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group className="col-12 col-md-4 mb-3">
+                    <Form.Label>Video</Form.Label>
+                    <Form.Control type="file" id="videoFile" name="videoFile" accept="video/*" isInvalid={error.videoFile} onChange={handleVideoChange} />
+                    {/* Preview image */}
+                    {previewVideo && (
+                      <div className="text-center mt-3">
+                        <video src={previewVideo} controls className="w-100"></video>
+                      </div>
+                    )}
+                    <Form.Control.Feedback type="invalid">
+                      {error.videoFile}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </div>
+              </div>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>

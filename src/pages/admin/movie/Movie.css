@@ -1,0 +1,17 @@
+.character-wrapper {
+  position: relative;
+  width: 120px;
+  cursor: pointer;
+}
+
+.character-wrapper .btn-close {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: small;
+}
+
+.character-wrapper:hover .btn-close {
+  display: inline;
+}

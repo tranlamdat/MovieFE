@@ -40,9 +40,7 @@ const BaseHeader = () => {
   return (
     <header className="sticky-top">
       <nav
-        className={`navbar navbar-expand-lg navbar-dark py-3 ${
-          isShadow ? "bg-dark" : ""
-        }`}
+        className={`navbar navbar-expand-lg navbar-dark py-3 ${isShadow ? "bg-dark" : ""}`}
         aria-label="Offcanvas navbar large"
       >
         <div className="container-fluid">
@@ -79,7 +77,7 @@ const BaseHeader = () => {
             <div className="offcanvas-body" id="navbar-example2">
               <ul className="navbar-nav nav-pills justify-content-center flex-grow-1 gap-4 gap-lg-5 pe-3">
                 <li className="nav-item">
-                  <a className="nav-link active" href="#home">
+                  <a className="nav-link" href="#home">
                     Home
                   </a>
                 </li>

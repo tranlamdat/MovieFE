@@ -33,3 +33,7 @@ nav {
 span {
   cursor: pointer;
 }
+
+.bg-body-tertiary {
+  background-color: transparent !important;
+}
