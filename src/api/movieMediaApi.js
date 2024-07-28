@@ -1,9 +1,14 @@
 import axiosClient from "./axiosClient";
 
 class MovieMediaApi {
-  AddNew = (actor) => {
+  AddNew = (movieMedia) => {
     const url = "/api/movie-medias";
-    return axiosClient.post(url, actor);
+    return axiosClient.post(url, movieMedia);
+  };
+
+  Update = (id, movieMedia) => {
+    const url = `/api/movie-medias/${id}`;
+    return axiosClient.put(url, movieMedia);
   };
 
   Remove = (id) => {

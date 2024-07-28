@@ -4,12 +4,14 @@ import PropTypes from "prop-types";
 import actorApi from "../../../api/actorApi";
 import handleError from "../../../services/HandleErrors";
 import { Button, CloseButton, FloatingLabel, Form, Image, Modal } from "react-bootstrap";
+import swalService from "../../../services/SwalService";
+import movieActorApi from "../../../api/movieActorApi";
 
-const SearchForm = ({ listActors, setListActors, errorListActors }) => {
+const SearchForm = ({ formData, setFormData, errorListActors }) => {
     const [query, setQuery] = useState('');
     const [filteredRecommendations, setFilteredRecommendations] = useState([]);
     const [show, setShow] = useState(false);
-    const [currentActor, setCurrentActor] = useState(null);
+    const [currentActor, setCurrentActor] = useState({});
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -46,36 +48,67 @@ const SearchForm = ({ listActors, setListActors, errorListActors }) => {
     };
 
     const handleRecommendationClick = (item) => {
-        const isExist = listActors.some((actor) => actor.actorId === item.actorId);
+        const isExist = formData.listActors.some((actor) => actor.actor.actorId === item.actorId);
         if (!isExist) {
-            setCurrentActor(item);
+            setCurrentActor({ actor: item });
             handleShow();
         }
     };
 
-    const handleRemoveActor = (id) => {
-        setListActors((previousState) => {
-            return previousState.filter((actor) => actor.actorId !== id);
-        });
+    const handleEditActor = (actor) => {
+        setCurrentActor(actor);
+        handleShow();
     };
 
-    // Debounce character name
-    const debounceCharacterName = useCallback(debounce((nextValue) => {
-        setCurrentActor((previousState) => {
-            return { ...previousState, characterName: nextValue };
-        });
-    }, 500), []);
+    const handleRemoveActor = async (movieActor) => {
+        const removeActorFromList = () => {
+            setFormData((previousState) => ({
+                ...previousState,
+                listActors: previousState.listActors.filter((item) => item.actor.actorId !== movieActor.actor.actorId),
+            }));
+        };
+
+        if (movieActor.movieActorId) {
+            swalService.confirmDelete(async () => {
+                try {
+                    await movieActorApi.Remove(movieActor.movieActorId);
+                    removeActorFromList();
+                } catch (error) {
+                    handleError.showError(error);
+                }
+            });
+        } else {
+            removeActorFromList();
+        }
+    };
 
     const handleChange = (event) => {
         const { value } = event.target;
-        debounceCharacterName(value);
+        setCurrentActor((previousState) => {
+            return { ...previousState, characterName: value };
+        });
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setListActors([...listActors, currentActor]);
+        console.log(currentActor)
+        if (currentActor.movieActorId) {
+            setFormData((previousState) => {
+                return {
+                    ...previousState,
+                    listActors: previousState.listActors.map((item) => item.movieActorId === currentActor.movieActorId ? currentActor : item),
+                };
+            });
+        } else {
+            setFormData((previousState) => {
+                return {
+                    ...previousState,
+                    listActors: [...previousState.listActors, currentActor],
+                };
+            })
+        }
         handleClose();
-        setCurrentActor(null);
+        setCurrentActor({});
         setQuery('');
         setFilteredRecommendations([]);
     };
@@ -107,22 +140,23 @@ const SearchForm = ({ listActors, setListActors, errorListActors }) => {
                     </div>
                 )}
             </div>
-            {listActors.length > 0 && (
+
+            {formData.listActors.length > 0 && (
                 <div className="d-flex flex-wrap gap-2 mt-3">
-                    {listActors.map((actor) => (
-                        <div className="character-wrapper" key={actor.actorId}>
+                    {formData.listActors.map((item, idx) => (
+                        <div className="character-wrapper" key={idx} onClick={() => handleEditActor(item)}>
                             <div className="text-center">
                                 <Image
-                                    src={actor.avatarUrl}
-                                    alt={actor.name}
+                                    src={item.actor.avatarUrl}
+                                    alt={item.actor.name}
                                     width={100}
                                     height={100}
                                     roundedCircle
                                     style={{ objectFit: "cover" }}
                                 />
-                                <h6>{actor.name} ({actor.characterName})</h6>
+                                <h6>{item.actor.name} ({item.characterName})</h6>
                             </div>
-                            <CloseButton className="bg-light" onClick={() => handleRemoveActor(actor.actorId)} />
+                            <CloseButton className="bg-light" onClick={() => handleRemoveActor(item)} />
                         </div>
                     ))}
                 </div>
@@ -148,6 +182,7 @@ const SearchForm = ({ listActors, setListActors, errorListActors }) => {
                             <Form.Control
                                 type="text"
                                 onChange={handleChange}
+                                value={currentActor.characterName}
                                 placeholder="Character name"
                             />
                         </FloatingLabel>
@@ -165,8 +200,8 @@ const SearchForm = ({ listActors, setListActors, errorListActors }) => {
 }
 
 SearchForm.propTypes = {
-    listActors: PropTypes.array,
-    setListActors: PropTypes.func,
+    formData: PropTypes.object,
+    setFormData: PropTypes.func,
     errorListActors: PropTypes.string,
 }
 

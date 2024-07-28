@@ -11,14 +11,14 @@ class MovieActorApi {
     return axiosClient.get(url);
   };
 
-  AddNew = (movie) => {
+  AddNew = (movieActor) => {
     const url = "/api/movie-actors";
-    return axiosClient.post(url, movie);
+    return axiosClient.post(url, movieActor);
   };
 
-  Update = (movie) => {
-    const url = `/api/movie-actors/${movie.movieId}`;
-    return axiosClient.put(url, movie);
+  Update = (movieActor) => {
+    const url = `/api/movie-actors/${movieActor.movieActorId}`;
+    return axiosClient.put(url, movieActor);
   };
 
   Remove = (id) => {
