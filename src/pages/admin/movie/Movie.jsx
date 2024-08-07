@@ -59,54 +59,73 @@ const AdminMovie = () => {
     {
       name: "ID",
       selector: (row) => row.movieId,
+      grow: 0,
       sortable: true,
     },
     {
       name: "Title",
       selector: (row) => row.title,
+      maxWidth: "400px",
       sortable: true,
     },
     {
       name: "Release Date",
       selector: (row) => row.releaseDate,
-      sortable: true,
-    },
-    {
-      name: "Description",
-      selector: (row) => row.description,
+      maxWidth: "200px",
       sortable: true,
     },
     {
       name: "Duration",
       selector: (row) => row.duration,
+      maxWidth: "150px",
       sortable: true,
+      cell: row => (
+        <div>
+          {row.duration} minutes
+        </div>
+      ),
     },
     {
       name: "National",
       selector: (row) => row.national,
+      maxWidth: "100px",
       sortable: true,
     },
     {
       name: "Genre",
       selector: (row) => row.genre.name,
+      maxWidth: "150px",
       sortable: true,
     }, {
       name: "Director",
       selector: (row) => row.director.name,
+      maxWidth: "150px",
       sortable: true,
     },
     {
-      name: "Date Created",
-      selector: (row) => row.dateCreated,
-      sortable: true,
+      name: 'Poster',
+      grow: 0,
+      cell: row => (
+        <div className="my-2">
+          <img height="84px" width="56px" alt={row.name} src={row.movieMedias.find((media) => media.type == MEDIA_TYPE.POSTER).url} />
+        </div>
+      ),
     },
-    {
-      name: "Date Updated",
-      selector: (row) => row.dateUpdated,
-      sortable: true,
-    },
+    // {
+    //   name: "Date Created",
+    //   selector: (row) => row.dateCreated,
+    //   maxWidth: "200px",
+    //   sortable: true,
+    // },
+    // {
+    //   name: "Date Updated",
+    //   selector: (row) => row.dateUpdated,
+    //   maxWidth: "200px",
+    //   sortable: true,
+    // },
     {
       name: "Action",
+      maxWidth: "200px",
       cell: (row) => (
         <div className="d-flex flex-wrap gap-2 py-2 justify-content-center">
           <button

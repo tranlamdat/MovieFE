@@ -49,8 +49,8 @@ const CarouselCard = ({ listItems }) => {
       slidesToSlide={1}
       swipeable
     >
-      {listItems.map((item) => (
-        <MovieCard key={item.id} movie={item}></MovieCard>
+      {listItems.length > 0 && listItems.map((item) => (
+        <MovieCard key={item.movieId} movie={item}></MovieCard>
       ))}
     </Carousel>
   );

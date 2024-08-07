@@ -4,88 +4,53 @@ import "./MoviePage.css";
 import UseTop from "../../hooks/UseTop";
 import CarouselCard from "../../components/card/carousel/CarouselCard";
 import VideoPlayer from "../../components/video-player/VideoPlayer";
-import { useState } from "react";
-
-const relatedMovie = [
-  {
-    id: 1,
-    img: "/img/c1.jpg",
-    title: "Venom",
-    duration: "120 min",
-    genre: "Action",
-  },
-  {
-    id: 2,
-    img: "/img/c2.jpg",
-    title: "Dunkirk",
-    duration: "120 min",
-    genre: "Adventure",
-  },
-  {
-    id: 3,
-    img: "/img/c3.jpg",
-    title: "Batman",
-    duration: "120 min",
-    genre: "Thriller",
-  },
-  {
-    id: 4,
-    img: "/img/c4.jpg",
-    title: "John Wick 2",
-    duration: "120 min",
-    genre: "Adventure",
-  },
-  {
-    id: 5,
-    img: "/img/c5.jpg",
-    title: "Aquaman",
-    duration: "120 min",
-    genre: "Action",
-  },
-  {
-    id: 6,
-    img: "/img/c6.jpg",
-    title: "Black Panther",
-    duration: "120 min",
-    genre: "Thriller",
-  },
-  {
-    id: 7,
-    img: "/img/c7.jpg",
-    title: "Thor",
-    duration: "120 min",
-    genre: "Adventure",
-  },
-  {
-    id: 8,
-    img: "/img/c8.jpg",
-    title: "Bumlebee",
-    duration: "120 min",
-    genre: "Thriller",
-  },
-  {
-    id: 9,
-    img: "/img/c9.jpg",
-    title: "Mortal Engines",
-    duration: "120 min",
-    genre: "Action",
-  },
-  {
-    id: 10,
-    img: "/img/c10.jpg",
-    title: "UnderWorld Blood War",
-    duration: "120 min",
-    genre: "Action",
-  },
-];
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import movieApi from "../../api/movieApi";
+import handleError from "../../services/HandleErrors";
+import { MEDIA_TYPE } from "../../utils/constant";
+import { formatDistanceToNow } from "date-fns";
 
 const MoviePage = () => {
   UseTop();
+  const { movieId } = useParams();
+  const [movie, setMovie] = useState({});
+  const [relatedMovie, setRelatedMovie] = useState([]);
   const [isWatchNow, setIsWatchNow] = useState(false);
 
   const handleWatchNow = () => {
     setIsWatchNow(true);
   };
+
+  const getFormatDistanceToNow = (date) => {
+    const formattedDate = formatDistanceToNow(new Date(date), {
+      addSuffix: true,
+    });
+
+    return formattedDate;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const getMovie = await movieApi.GetOne(movieId);
+        // Set movie
+        setMovie(getMovie);
+
+        const getRelatedMovie = await movieApi.RelatedMovie(getMovie.genre.genreId);
+        // Set related movies
+        setRelatedMovie(getRelatedMovie);
+      } catch (error) {
+        handleError.showError(error);
+      }
+    };
+
+    fetchData();
+  }, [movieId]);
+
+  const bannerUrl = movie.movieMedias?.find((media) => media.type === MEDIA_TYPE.BANNER);
+  const posterUrl = movie.movieMedias?.find((media) => media.type === MEDIA_TYPE.POSTER);
+  const videoUrl = movie.movieMedias?.find((media) => media.type === MEDIA_TYPE.VIDEO);
 
   return (
     <BaseLayout>
@@ -99,20 +64,24 @@ const MoviePage = () => {
               >
                 <div className="card-body p-5">
                   <Card className="text-bg-secondary p-3 mb-3">
-                    <Card.Img
-                      src="/img/home1.jpg"
-                      className="card-img"
-                      alt="Card image"
-                    />
+                    {bannerUrl && (
+                      <Card.Img
+                        src={bannerUrl?.url}
+                        className="card-img"
+                        alt="Card image"
+                      />
+                    )}
                     <Card.ImgOverlay>
                       <div className="row py-4">
                         <div className="col-12 col-md-5 col-xl-3 text-center">
                           <figure className="figure">
-                            <img
-                              src="/img/c1.jpg"
-                              className="figure-img img-fluid rounded"
-                              alt="..."
-                            />
+                            {posterUrl && (
+                              <img
+                                src={posterUrl?.url}
+                                className="figure-img img-fluid rounded"
+                                alt="..."
+                              />
+                            )}
                             <figcaption className="figure-caption">
                               <button
                                 className="btn btn-danger"
@@ -124,21 +93,17 @@ const MoviePage = () => {
                           </figure>
                         </div>
                         <div className="col-12 col-md-7 col-xl-9">
-                          <Card.Title as="h2">My Demon</Card.Title>
-                          <Card.Text>
-                            This is a wider card with supporting text below as a
-                            natural lead-in to additional content. This content
-                            is a little bit longer.
-                          </Card.Text>
-                          <Card.Text>Last updated 3 mins ago</Card.Text>
+                          <Card.Title as="h1">{movie.title}</Card.Title>
+                          <Card.Text>{movie.description}</Card.Text>
+                          <Card.Text>{getFormatDistanceToNow(movie.dateCreated ?? new Date())}</Card.Text>
                         </div>
                       </div>
                     </Card.ImgOverlay>
                   </Card>
 
-                  {isWatchNow && (
+                  {isWatchNow && videoUrl && (
                     <div className="card text-bg-secondary p-3 mb-3">
-                      <VideoPlayer url="/video/trailer.mp4"></VideoPlayer>
+                      <VideoPlayer url={videoUrl?.url}></VideoPlayer>
                     </div>
                   )}
 
@@ -160,53 +125,44 @@ const MoviePage = () => {
                               </tr>
                               <tr>
                                 <td className="fw-bold">Genre</td>
-                                <td>Anime</td>
+                                <td>{movie.genre?.name}</td>
                               </tr>
                               <tr>
                                 <td className="fw-bold">Director</td>
-                                <td>Sotozaki Haruo</td>
+                                <td>{movie.director?.name}</td>
                               </tr>
                               <tr>
                                 <td className="fw-bold">National</td>
-                                <td>Japan</td>
+                                <td>{movie.national}</td>
                               </tr>
                               <tr>
                                 <td className="fw-bold">Duration</td>
-                                <td>1h 30m</td>
+                                <td>{movie.duration} minutes</td>
                               </tr>
                             </tbody>
                           </Table>
                         </Tab>
                         <Tab eventKey="character" title="Character">
                           <div className="d-flex flex-wrap gap-3">
-                            <div className="text-center">
-                              <Image
-                                src="/img/c3.jpg"
-                                width={150}
-                                height={150}
-                                roundedCircle
-                                style={{ objectFit: "cover" }}
-                              />
-                              <h6>Naruto</h6>
-                            </div>
-                            <div className="text-center">
-                              <Image
-                                src="/img/c3.jpg"
-                                width={150}
-                                height={150}
-                                roundedCircle
-                                style={{ objectFit: "cover" }}
-                              />
-                              <h6>Naruto</h6>
-                            </div>
+                            {movie.movieActors?.map((item, index) => (
+                              <div key={index} className="text-center" style={{ width: "160px" }}>
+                                <Image
+                                  src={item.actor.avatarUrl}
+                                  width={150}
+                                  height={150}
+                                  roundedCircle
+                                  style={{ objectFit: "cover" }}
+                                />
+                                <h6>{item.actor.name} ({item.characterName})</h6>
+                              </div>
+                            ))}
                           </div>
                         </Tab>
                         <Tab eventKey="picture" title="Picture">
                           <Figure>
-                            <Figure.Image src="/img/home1.jpg" width={"100%"} />
+                            <Figure.Image src={bannerUrl?.url} width={"100%"} />
                             <Figure.Caption>
-                              Nulla vitae elit libero, a pharetra augue mollis
-                              interdum.
+                              {bannerUrl?.name}
                             </Figure.Caption>
                           </Figure>
                         </Tab>

@@ -6,6 +6,21 @@ class MovieApi {
     return axiosClient.get(url);
   };
 
+  OpenThisWeek = () => {
+    const url = "/api/movies/open-this-week";
+    return axiosClient.get(url);
+  };
+
+  ComingSoon = () => {
+    const url = "/api/movies/coming-soon";
+    return axiosClient.get(url);
+  };
+
+  RelatedMovie = (genreId) => {
+    const url = `/api/movies/related/${genreId}`;
+    return axiosClient.get(url);
+  }
+
   GetOne = (id) => {
     const url = `/api/movies/${id}`;
     return axiosClient.get(url);

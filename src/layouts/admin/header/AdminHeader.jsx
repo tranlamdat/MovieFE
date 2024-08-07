@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import swalService from "../../../services/SwalService";
 import authService from "../../../services/AuthService";
+import { useEffect, useState } from "react";
 
 const AdminHeader = ({ toggleSidebar }) => {
   const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
 
   const handleLogout = () => {
     swalService.confirmToHandle(
@@ -16,6 +18,19 @@ const AdminHeader = ({ toggleSidebar }) => {
     );
   };
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = authService.getUserData();
+        setUserData(user);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <header
       id="header"
@@ -23,7 +38,7 @@ const AdminHeader = ({ toggleSidebar }) => {
     >
       <div className="d-flex align-items-center justify-content-between">
         <Link to="/admin/dashboard" className="logo d-flex align-items-center">
-          <img src="/image/logo.png" alt="" />
+          <img src="/logo.png" alt="" />
           <span className="d-none d-lg-block">Movie</span>
         </Link>
         <i
@@ -48,7 +63,7 @@ const AdminHeader = ({ toggleSidebar }) => {
                 className="rounded-circle"
               />
               <span className="d-none d-md-block dropdown-toggle ps-2">
-                Admin
+                {userData ? userData.firstName : "Admin"}
               </span>
             </a>
 
@@ -85,7 +100,7 @@ const AdminHeader = ({ toggleSidebar }) => {
 };
 
 AdminHeader.propTypes = {
-  toggleSidebar: () => {},
+  toggleSidebar: () => { },
 };
 
 export default AdminHeader;
