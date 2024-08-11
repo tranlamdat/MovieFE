@@ -34,3 +34,26 @@
   text-transform: uppercase;
   border-bottom: 1px solid var(--main-color);
 }
+
+.figure-image {
+  position: relative;
+}
+
+.figure-image .watch-list {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+.figure-image .watch-list:hover {
+  cursor: pointer;
+  background-color: #dee2e6bf !important;
+}
+
+.figure-image img {
+  object-fit: cover;
+}
+
+.bg-secondary {
+  --bs-bg-opacity: 0.5 !important;
+}

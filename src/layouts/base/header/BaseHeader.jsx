@@ -108,7 +108,7 @@ const BaseHeader = () => {
                         aria-expanded="false"
                       >
                         <Image
-                          src="/img/default-avatar-1.png"
+                          src={userData?.profilePicture ?? "/img/default-avatar-1.png"}
                           width={30}
                           height={30}
                           roundedCircle
@@ -124,13 +124,15 @@ const BaseHeader = () => {
                           <hr className="dropdown-divider" />
                         </li>
                         <li>
-                          <Link className="dropdown-item" to="/profile">
+                          <Link className="dropdown-item d-flex align-items-center" to="/profile">
+                            <i className="bi bi-person"></i>
                             My Profile
                           </Link>
                         </li>
                         <li>
-                          <Link className="dropdown-item" to="/change-password">
-                            Change Password
+                          <Link className="dropdown-item d-flex align-items-center" to="/watch-lists">
+                            <i className="bi bi-bookmark-heart"></i>
+                            Watch List
                           </Link>
                         </li>
                         <li>
@@ -138,10 +140,11 @@ const BaseHeader = () => {
                         </li>
                         <li>
                           <a
-                            className="dropdown-item"
+                            className="dropdown-item d-flex align-items-center"
                             style={{ cursor: "pointer" }}
                             onClick={handleLogout}
                           >
+                            <i className="bi bi-box-arrow-right"></i>
                             Logout
                           </a>
                         </li>

@@ -1,5 +1,6 @@
 import BaseFooter from "./footer/BaseFooter";
 import BaseHeader from "./header/BaseHeader";
+import PropTypes from "prop-types";
 
 const BaseLayout = ({ children }) => {
   return (
@@ -9,6 +10,10 @@ const BaseLayout = ({ children }) => {
       <BaseFooter />
     </div>
   );
+};
+
+BaseLayout.propTypes = {
+  children: PropTypes.node,
 };
 
 export default BaseLayout;

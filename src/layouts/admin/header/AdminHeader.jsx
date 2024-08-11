@@ -56,7 +56,7 @@ const AdminHeader = ({ toggleSidebar }) => {
               data-bs-toggle="dropdown"
             >
               <img
-                src="/img/default-avatar.png"
+                src={userData?.profilePicture ?? "/img/default-avatar-1.png"}
                 alt="Profile"
                 width={30}
                 height={30}

@@ -3,18 +3,18 @@ import authService from "../../services/AuthService";
 import swalService from "../../services/SwalService";
 import { ROLE } from "../../utils/constant";
 
-const AdminProtected = ({ children }) => {
+const MemberProtected = ({ children }) => {
   const navigate = useNavigate();
 
   const isAuthenticated = () => {
     return authService.isLogin();
   };
 
-  const isAdmin = () => {
-    return authService.getUserRole() === ROLE.ADMIN;
+  const isMember = () => {
+    return authService.getUserRole() === ROLE.MEMBER;
   };
 
-  if (isAuthenticated() && isAdmin()) {
+  if (isAuthenticated() && isMember()) {
     return children;
   }
 
@@ -26,4 +26,4 @@ const AdminProtected = ({ children }) => {
   );
 };
 
-export default AdminProtected;
+export default MemberProtected;

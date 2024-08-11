@@ -24,6 +24,7 @@
   right: 4rem;
   bottom: 10%;
 }
+
 .play .bx {
   background: var(--bg-color);
   padding: 10px;
@@ -41,11 +42,6 @@
 .heading {
   text-transform: uppercase;
   border-bottom: 1px solid var(--main-color);
-}
-
-.movies-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, auto));
 }
 
 .box .box-img {
@@ -73,44 +69,6 @@
   font-size: 13px;
 }
 
-/* .newsletter {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  row-gap: 2rem;
-}
-
-.newsletter h2 {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.newsletter form {
-  background: var(--bg-color);
-  padding: 10px;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-}
-.newsletter form input {
-  border: none;
-  outline: none;
-}
-.newsletter form .email {
-  width: 280px;
-}
-.newsletter form input::placeholder {
-  color: var(--text-color);
-  font-size: 0.8rem;
-  font-weight: 400;
-}
-.newsletter .btn {
-  text-transform: uppercase;
-  font-weight: 500;
-  cursor: pointer;
-} */
 @media (max-width: 1080px) {
   .home-text {
     padding: 0 100px;
@@ -131,9 +89,6 @@
   .home-text h1 {
     font-size: 2.4rem;
   }
-  .movies-container {
-    grid-template-columns: repeat(auto-fit, minmax(160px, auto));
-  }
 }
 @media (max-width: 472px) {
   .newsletter form .email {
@@ -150,9 +105,6 @@
   }
   .play .bx {
     padding: 7px;
-  }
-  .movies-container {
-    grid-template-columns: repeat(auto-fit, minmax(140px, auto));
   }
   .box .box-img {
     height: 240px;

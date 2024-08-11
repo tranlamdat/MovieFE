@@ -5,18 +5,23 @@ import UseTop from "../../hooks/UseTop";
 import CarouselCard from "../../components/card/carousel/CarouselCard";
 import VideoPlayer from "../../components/video-player/VideoPlayer";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import movieApi from "../../api/movieApi";
 import handleError from "../../services/HandleErrors";
-import { MEDIA_TYPE } from "../../utils/constant";
+import { MEDIA_TYPE, SWAL_POSITION } from "../../utils/constant";
 import { formatDistanceToNow } from "date-fns";
+import watchListApi from "../../api/watchListApi";
+import authService from "../../services/AuthService";
+import swalService from "../../services/SwalService";
 
 const MoviePage = () => {
   UseTop();
+  const navigate = useNavigate();
   const { movieId } = useParams();
   const [movie, setMovie] = useState({});
   const [relatedMovie, setRelatedMovie] = useState([]);
   const [isWatchNow, setIsWatchNow] = useState(false);
+  const [follow, setFollow] = useState(null);
 
   const handleWatchNow = () => {
     setIsWatchNow(true);
@@ -30,12 +35,45 @@ const MoviePage = () => {
     return formattedDate;
   };
 
+  const handleFollow = async () => {
+    try {
+      if (!authService.isLogin()) {
+        swalService.confirmToHandle("Please login to continue.", "warning", () => navigate("/login"));
+        return;
+      }
+
+      if (follow) {
+        await watchListApi.Remove(follow.watchListId);
+        setFollow(null);
+      } else {
+        const response = await watchListApi.AddNew({
+          movieId: movie.movieId,
+          userId: authService.getUserData().userId,
+        });
+        swalService.showCustomPosition("Added to watch list", "success", SWAL_POSITION.TOP_END);
+        setFollow(response);
+      }
+    } catch (error) {
+      handleError.showError(error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const getMovie = await movieApi.GetOne(movieId);
         // Set movie
         setMovie(getMovie);
+
+        // Set watch now
+        const user = authService.getUserData();
+        if (user) {
+          const getWatchList = await watchListApi.GetByUserId(user.userId)
+          const isExistInWatchList = getWatchList.find(
+            (item) => item.movie.movieId === getMovie.movieId
+          );
+          setFollow(isExistInWatchList ?? false);
+        }
 
         const getRelatedMovie = await movieApi.RelatedMovie(getMovie.genre.genreId);
         // Set related movies
@@ -74,13 +112,28 @@ const MoviePage = () => {
                     <Card.ImgOverlay>
                       <div className="row py-4">
                         <div className="col-12 col-md-5 col-xl-3 text-center">
-                          <figure className="figure">
+                          <figure className="figure" style={{ cursor: "pointer" }}>
                             {posterUrl && (
-                              <img
-                                src={posterUrl?.url}
-                                className="figure-img img-fluid rounded"
-                                alt="..."
-                              />
+                              <div className="figure-image">
+                                <img
+                                  src={posterUrl?.url}
+                                  className="figure-img img-fluid rounded"
+                                  alt="..."
+                                />
+                                <div className="watch-list badge bg-secondary" onClick={handleFollow}>
+                                  {follow ? (
+                                    <>
+                                      <i className="bi bi-bookmark-dash-fill"></i>
+                                      <span className="ms-1">Unfollow</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <i className="bi bi-bookmark-plus"></i>
+                                      <span className="ms-1">Follow</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
                             )}
                             <figcaption className="figure-caption">
                               <button

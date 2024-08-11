@@ -9,6 +9,7 @@ import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import movieApi from "../../api/movieApi";
 import handleError from "../../services/HandleErrors";
+import { ROLE } from "../../utils/constant";
 
 const HomePage = () => {
   UseTop();
@@ -20,7 +21,7 @@ const HomePage = () => {
   };
 
   const isAdmin = () => {
-    return authService.getUserRole() === "Admin";
+    return authService.getUserRole() === ROLE.ADMIN;
   };
 
   if (isAuthenticated() && isAdmin()) {
@@ -161,9 +162,11 @@ const HomePage = () => {
         <section className="container py-4 mt-5" id="movies">
           <h5 className="heading">Opening This Week</h5>
 
-          <div className="movies-container">
+          <div className="row">
             {openingThisWeek.length > 0 && openingThisWeek.map((movie) => (
-              <MovieCard key={movie.movieId} movie={movie}></MovieCard>
+              <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6 px-0" key={movie.movieId}>
+                <MovieCard movie={movie}></MovieCard>
+              </div>
             ))}
           </div>
         </section>

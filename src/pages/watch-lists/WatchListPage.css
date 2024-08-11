@@ -1,0 +1,14 @@
+.watch-list-wrapper {
+  position: relative;
+}
+
+.watch-list-wrapper .watch-list {
+  position: absolute;
+  top: 30px;
+  left: 16px;
+}
+
+.empty-watch-list {
+  text-align: center;
+  padding-top: 4rem;
+}

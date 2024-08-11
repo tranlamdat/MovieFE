@@ -9,6 +9,8 @@ import Actor from "./pages/admin/actor/Actor";
 import Director from "./pages/admin/director/Director";
 import Genre from "./pages/admin/genre/Genre";
 import AdminMovie from "./pages/admin/movie/Movie";
+import ProfilePage from "./pages/profile/ProfilePage";
+import WatchListPage from "./pages/watch-lists/WatchListPage";
 
 function App() {
   const router = useRoutes([
@@ -27,6 +29,14 @@ function App() {
     {
       path: "/movie/:movieId",
       element: <MoviePage />,
+    },
+    {
+      path: "/profile",
+      element: <ProfilePage />,
+    },
+    {
+      path: "/watch-lists",
+      element: <WatchListPage />
     },
     {
       path: "/admin",
