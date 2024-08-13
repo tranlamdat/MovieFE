@@ -11,10 +11,18 @@ class AuthService {
     storageService.remove("USER_DATA");
   }
 
-  saveUser(user) {
-    storageService.save("ACCESS_TOKEN", user.accessToken);
-    storageService.save("USER_ROLE", user.role);
-    storageService.save("USER_DATA", user.user);
+  saveUser(response) {
+    const userData = {
+      userId: response.user.userId,
+      email: response.user.email,
+      firstName: response.user.firstName,
+      lastName: response.user.lastName,
+      profilePicture: response.user.profilePicture,
+    }
+
+    storageService.save("ACCESS_TOKEN", response.accessToken);
+    storageService.save("USER_ROLE", response.user.role.name);
+    storageService.save("USER_DATA", userData);
   }
 
   getAccessToken() {
