@@ -58,6 +58,11 @@ const MoviePage = () => {
     }
   };
 
+  const isAllowWatchNow = () => {
+    console.log(movie.releaseDate);
+    return new Date(movie.releaseDate) <= new Date();
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -136,19 +141,27 @@ const MoviePage = () => {
                               </div>
                             )}
                             <figcaption className="figure-caption">
-                              <button
-                                className="btn btn-danger"
-                                onClick={handleWatchNow}
-                              >
-                                Watch now
-                              </button>
+                              {isAllowWatchNow() ? (
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={handleWatchNow}
+                                >
+                                  Watch now
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn btn-secondary"
+                                >
+                                  Watch now
+                                </button>
+                              )}
                             </figcaption>
                           </figure>
                         </div>
-                        <div className="col-12 col-md-7 col-xl-9">
+                        <div className="col-12 col-md-7 col-xl-9 text-dark">
                           <Card.Title as="h1">{movie.title}</Card.Title>
                           <Card.Text>{movie.description}</Card.Text>
-                          <Card.Text>{getFormatDistanceToNow(movie.dateCreated ?? new Date())}</Card.Text>
+                          <Card.Text>{getFormatDistanceToNow(movie.releaseDate ?? new Date())}</Card.Text>
                         </div>
                       </div>
                     </Card.ImgOverlay>

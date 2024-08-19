@@ -162,18 +162,30 @@ const HomePage = () => {
         <section className="container py-4 mt-5" id="movies">
           <h5 className="heading">Opening This Week</h5>
 
-          <div className="row">
-            {openingThisWeek.length > 0 && openingThisWeek.map((movie) => (
-              <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6 px-0" key={movie.movieId}>
-                <MovieCard movie={movie}></MovieCard>
-              </div>
-            ))}
-          </div>
+          {openingThisWeek.length > 0 ? (
+            <div className="row">
+              {openingThisWeek.map((movie) => (
+                <div className="col-xl-2 col-lg-3 col-md-4 col-sm-6 px-0" key={movie.movieId}>
+                  <MovieCard movie={movie}></MovieCard>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-3">
+              <p className="text-center">No data</p>
+            </div>
+          )}
         </section>
 
         <section className="container py-4 mt-5" id="coming">
           <h5 className="heading">Coming Soon</h5>
-          <CarouselCard listItems={comingSoon}></CarouselCard>
+          {comingSoon.length > 0 ? (
+            <CarouselCard listItems={comingSoon}></CarouselCard>
+          ) : (
+            <div className="mt-3">
+              <p className="text-center">No data</p>
+            </div>
+          )}
         </section>
         <section className="container py-4 mt-5 newsletter" id="newsletter">
           <h5 className="heading">Contact Us</h5>

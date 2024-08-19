@@ -1,4 +1,4 @@
-import { Button, FloatingLabel, Form, Modal, Spinner } from "react-bootstrap";
+import { Button, FloatingLabel, Form, Image, ListGroup, Modal, Spinner } from "react-bootstrap";
 import AdminLayout from "../../../layouts/admin/AdminLayout";
 import { useEffect, useState } from "react";
 import actorApi from "../../../api/actorApi";
@@ -8,6 +8,7 @@ import formatDateTime from "../../../services/FormatDateTime";
 import countryApi from "../../../api/countryApi";
 import * as yup from "yup";
 import swalService from "../../../services/SwalService";
+import { MEDIA_TYPE } from "../../../utils/constant";
 
 const Actor = () => {
   const [actors, setActors] = useState([]);
@@ -29,6 +30,9 @@ const Actor = () => {
   });
   const [error, setError] = useState({});
   const [previewImage, setPreviewImage] = useState("/img/default-avatar.png");
+
+  const [showFilm, setShowFilm] = useState(false);
+  const [movieActors, setMovieActors] = useState([]);
 
   const columns = [
     {
@@ -73,6 +77,18 @@ const Actor = () => {
       sortable: true,
     },
     {
+      name: "Film",
+      grow: 0,
+      cell: (row) => (
+        <button
+          className="btn btn-outline-danger"
+          onClick={() => handleViewFile(row)}
+        >
+          <i className="bi bi-eye-fill"></i>
+        </button>
+      ),
+    },
+    {
       name: "Action",
       cell: (row) => (
         <div className="d-flex flex-wrap gap-2 py-2 justify-content-center">
@@ -107,6 +123,10 @@ const Actor = () => {
       dateCreated: "",
       dateUpdated: "",
     });
+  };
+
+  const handleCloseFilm = () => {
+    setShowFilm(false);
   };
 
   const handleShow = () => {
@@ -220,6 +240,11 @@ const Actor = () => {
       });
       setError(newError);
     }
+  };
+
+  const handleViewFile = (actor) => {
+    setMovieActors(actor.movieActors);
+    setShowFilm(true);
   };
 
   const handleEdit = async (id) => {
@@ -467,6 +492,49 @@ const Actor = () => {
               </Button>
             </Modal.Footer>
           </Form>
+        </Modal>
+
+        <Modal
+          show={showFilm}
+          onHide={handleCloseFilm}
+          backdrop="static"
+          keyboard={false}
+          centered
+        >
+          <div className="bg-dark text-white">
+            <Modal.Header closeButton closeVariant="white">
+              <Modal.Title>View film of actors</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="mb-3">
+                {movieActors.length > 0 ? (
+                  <ListGroup variant="flush">
+                    {movieActors.map((movieActor) => (
+                      <ListGroup.Item key={movieActor.movieActorId} variant="secondary">
+                        <div className="d-flex gap-3">
+                          <Image src={movieActor.movie.movieMedias.find((media) => media.type == MEDIA_TYPE.POSTER).url} width={100} height="auto" rounded />
+                          <div>
+                            <h6 className="mb-2">Title: {movieActor.movie.title}</h6>
+                            <p className="mb-1">National: {movieActor.movie.national}</p>
+                            <p className="mb-1">Genre: {movieActor.movie.genre.name}</p>
+                            <p className="mb-1">Play: {movieActor.characterName}</p>
+                            <p className="mb-1">View: {movieActor.movie.numberOfView}</p>
+                          </div>
+                        </div>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                ) : (
+                  <p>No data</p>
+                )}
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseFilm}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </div>
         </Modal>
       </section>
     </AdminLayout>
