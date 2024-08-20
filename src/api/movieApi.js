@@ -21,6 +21,11 @@ class MovieApi {
     return axiosClient.get(url);
   }
 
+  Search = (query, type) => {
+    const url = `/api/movies/search?name=${query}&type=${type}`;
+    return axiosClient.get(url);
+  };
+
   GetOne = (id) => {
     const url = `/api/movies/${id}`;
     return axiosClient.get(url);

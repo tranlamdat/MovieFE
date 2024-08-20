@@ -23,3 +23,8 @@ export const SWAL_POSITION = {
   LEFT_START: "left-start",
   LEFT_END: "left-end",
 }
+
+export const SEARCH_TYPE = {
+  NAME: "name",
+  GENRE: "genre",
+}

@@ -11,6 +11,7 @@ import Genre from "./pages/admin/genre/Genre";
 import AdminMovie from "./pages/admin/movie/Movie";
 import ProfilePage from "./pages/profile/ProfilePage";
 import WatchListPage from "./pages/watch-lists/WatchListPage";
+import SearchPage from "./pages/search/SearchPage";
 
 function App() {
   const router = useRoutes([
@@ -25,6 +26,10 @@ function App() {
     {
       path: "/sign-up",
       element: <RegisterPage />,
+    },
+    {
+      path: "/search",
+      element: <SearchPage />,
     },
     {
       path: "/movie/:movieId",

@@ -5,7 +5,7 @@ import ContactForm from "../../components/form/contact/ContactForm";
 import UseTop from "../../hooks/UseTop";
 import CarouselCard from "../../components/card/carousel/CarouselCard";
 import authService from "../../services/AuthService";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import movieApi from "../../api/movieApi";
 import handleError from "../../services/HandleErrors";
@@ -13,8 +13,13 @@ import { ROLE } from "../../utils/constant";
 
 const HomePage = () => {
   UseTop();
+  const navigate = useNavigate();
   const [openingThisWeek, setOpeningThisWeek] = useState([]);
   const [comingSoon, setComingSoon] = useState([]);
+  const [formSearch, setFormSearch] = useState({
+    searchType: "name",
+    searchTerm: "",
+  });
 
   const isAuthenticated = () => {
     return authService.isLogin();
@@ -27,6 +32,25 @@ const HomePage = () => {
   if (isAuthenticated() && isAdmin()) {
     return <Navigate to="/admin/dashboard" />;
   }
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormSearch({
+      ...formSearch,
+      [name]: value,
+    });
+  };
+
+  const handleSearch = async (event) => {
+    event.preventDefault();
+
+    if (formSearch.searchTerm === "") {
+      return;
+    }
+
+    // Redirect to the search results page with the search term as a query parameter
+    navigate(`/search?query=${formSearch.searchTerm}&type=${formSearch.searchType}`);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,6 +82,18 @@ const HomePage = () => {
         data-bs-smooth-scroll="true"
         tabIndex="0"
       >
+        <div className="container">
+          <form className="search mt-5" onSubmit={handleSearch}>
+            <select id="searchType" name="searchType" onChange={handleChange}>
+              <option value="name">Name</option>
+              <option value="genre">Genre</option>
+            </select>
+
+            <input type="text" id="searchTerm" name="searchTerm" placeholder="Search..." onChange={handleChange} />
+            <button type="submit"><i className="bi bi-search"></i></button>
+          </form>
+        </div>
+
         <section className="py-4 mt-5" id="home">
           <div
             id="carouselExampleAutoplaying"
