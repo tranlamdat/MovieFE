@@ -21,8 +21,23 @@ class MovieApi {
     return axiosClient.get(url);
   }
 
+  UpdateView = (id) => {
+    const url = `/api/movies/view/${id}`;
+    return axiosClient.put(url);
+  };
+
   Search = (query, type) => {
     const url = `/api/movies/search?name=${query}&type=${type}`;
+    return axiosClient.get(url);
+  };
+
+  TopMostView = (top) => {
+    const url = `/api/movies/top-most-view?top=${top}`;
+    return axiosClient.get(url);
+  };
+
+  TopMovieLike = (top) => {
+    const url = `/api/movies/top-movie-like?top=${top}`;
     return axiosClient.get(url);
   };
 

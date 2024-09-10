@@ -1,232 +1,68 @@
-import { useState } from "react";
-import DynamicDataTable from "../../../components/table/DynamicDataTable";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../../layouts/admin/AdminLayout";
+import movieApi from "../../../api/movieApi";
+import formatDateTime from "../../../services/FormatDateTime";
+import handleError from "../../../services/HandleErrors";
+import { Card } from "react-bootstrap";
+import StatisticTable from "../../../components/dashboard/StatisticTable";
 
 const Dashboard = () => {
-  const columns = [
-    {
-      name: "ID",
-      selector: (row) => row.id,
-      sortable: true,
-    },
-    {
-      name: "Full Name",
-      selector: (row) => row.fullName,
-      sortable: true,
-    },
-    {
-      name: "Height",
-      selector: (row) => row.height,
-      sortable: true,
-    },
-    {
-      name: "Weight",
-      selector: (row) => row.weight,
-      sortable: true,
-    },
-    {
-      name: "Action",
-      cell: (row) => (
-        <>
-          <button
-            className="btn btn-outline-light"
-            onClick={() => handleEdit(row.id)}
-          >
-            Edit
-          </button>
-          <button
-            className="btn btn-danger ms-2"
-            onClick={() => handleDelete(row.id)}
-          >
-            Delete
-          </button>
-        </>
-      ),
-    },
-  ];
+  const [topMostView, setTopMostView] = useState([]);
+  const [topMovieLike, setTopMovieLike] = useState([]);
 
-  const rows = [
-    {
-      id: 1,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 2,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 3,
-      fullName: "Sheera Maine",
-      height: "1.69m",
-      weight: "74kg",
-    },
-    {
-      id: 4,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 5,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 6,
-      fullName: "Sheeraawaii",
-      height: "1.69m",
-      weight: "74kg",
-    },
-    {
-      id: 7,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 8,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 9,
-      fullName: "Sheeraawaii",
-      height: "1.69m",
-      weight: "74kg",
-    },
-    {
-      id: 10,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 11,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 12,
-      fullName: "Sheeraawaii",
-      height: "1.69m",
-      weight: "74kg",
-    },
-    {
-      id: 13,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 14,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 15,
-      fullName: "Sheeraawaii",
-      height: "1.69m",
-      weight: "74kg",
-    },
-    {
-      id: 16,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 17,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 18,
-      fullName: "Sheeraawaii",
-      height: "1.69m",
-      weight: "74kg",
-    },
-    {
-      id: 19,
-      fullName: "John Doe",
-      height: "1.75m",
-      weight: "89kg",
-    },
-    {
-      id: 20,
-      fullName: "Jane Doe",
-      height: "1.64m",
-      weight: "55kg",
-    },
-    {
-      id: 21,
-      fullName: "Sheeraawaii",
-      height: "1.69m",
-      weight: "74kg",
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Get top 10 movies
+        const [topMostView, topMovieLike] = await Promise.all([
+          movieApi.TopMostView(5),
+          movieApi.TopMovieLike(5)
+        ]);
 
-  const [data, setData] = useState(rows);
+        // Format date
+        topMostView.forEach((res) => {
+          res.releaseDate = formatDateTime.toDateString(res.releaseDate);
+          res.dateCreated = formatDateTime.toDateTimeString(res.dateCreated);
+          res.dateUpdated = formatDateTime.toDateTimeString(res.dateUpdated);
+        });
 
-  const handleSearch = (e) => {
-    let searchValue;
-    let personIDValue;
-    let fullNameValue;
-    let heightValue;
+        topMovieLike.forEach((res) => {
+          res.releaseDate = formatDateTime.toDateString(res.releaseDate);
+          res.dateCreated = formatDateTime.toDateTimeString(res.dateCreated);
+          res.dateUpdated = formatDateTime.toDateTimeString(res.dateUpdated);
+        });
 
-    const newRows = rows.filter((row) => {
-      personIDValue = row.id
-        .toString()
-        .toLowerCase()
-        .includes(e.target.value.toLowerCase());
-      fullNameValue = row.fullName
-        .toLowerCase()
-        .includes(e.target.value.toLowerCase());
-      heightValue = row.height
-        .toLowerCase()
-        .includes(e.target.value.toLowerCase());
-
-      if (personIDValue) {
-        searchValue = personIDValue;
-      } else if (fullNameValue) {
-        searchValue = fullNameValue;
-      } else {
-        searchValue = heightValue;
+        // Set data
+        setTopMostView(topMostView);
+        setTopMovieLike(topMovieLike);
+      } catch (error) {
+        handleError.showError(error);
       }
+    };
 
-      return searchValue;
-    });
-
-    setData(newRows);
-  };
-
-  const handleEdit = (id) => {
-    alert("Edit " + id);
-  };
-
-  const handleDelete = (id) => {
-    alert("Delete " + id);
-  };
+    fetchData();
+  }, []);
 
   return (
     <AdminLayout>
       <section className="section dashboard">
-        <h1>Dashboard</h1>
-        <input
-          type="search"
-          className="form-control-sm border ps-3"
-          placeholder="Search"
-          onChange={handleSearch}
-        />
-        <DynamicDataTable columns={columns} rows={data}></DynamicDataTable>
+        <Card bg="dark" text="white">
+          <Card.Body>
+            <Card.Title>Top Movie Most View</Card.Title>
+            <Card.Text>
+              <StatisticTable data={topMostView}></StatisticTable>
+            </Card.Text>
+          </Card.Body>
+        </Card>
+
+        <Card bg="dark" text="white">
+          <Card.Body>
+            <Card.Title>Top Movie Most Like</Card.Title>
+            <Card.Text>
+              <StatisticTable data={topMovieLike}></StatisticTable>
+            </Card.Text>
+          </Card.Body>
+        </Card>
       </section>
     </AdminLayout>
   );

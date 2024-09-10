@@ -23,7 +23,8 @@ const MoviePage = () => {
   const [isWatchNow, setIsWatchNow] = useState(false);
   const [follow, setFollow] = useState(null);
 
-  const handleWatchNow = () => {
+  const handleWatchNow = async () => {
+    await movieApi.UpdateView(movieId);
     setIsWatchNow(true);
   };
 
