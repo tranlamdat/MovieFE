@@ -4,9 +4,7 @@ import storageService from "../services/StorageService";
 import swalService from "../services/SwalService";
 import authService from "../services/AuthService";
 
-const axiosClient = axios.create({
-  baseURL: "https://localhost:7208",
-});
+const axiosClient = axios.create();
 
 // Interceptors
 // Add a request interceptor
