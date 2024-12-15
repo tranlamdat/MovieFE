@@ -40,6 +40,13 @@ const SidebarAdmin = () => {
       isActive: false,
       role: "Administrator",
     },
+    {
+      name: "Contact",
+      path: "/admin/contact",
+      icon: "bi bi-mailbox",
+      isActive: false,
+      role: "Administrator",
+    },
     // {
     //   name: "User",
     //   path: "/admin/user",

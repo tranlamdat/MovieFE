@@ -9,6 +9,7 @@ import Actor from "./pages/admin/actor/Actor";
 import Director from "./pages/admin/director/Director";
 import Genre from "./pages/admin/genre/Genre";
 import AdminMovie from "./pages/admin/movie/Movie";
+import AdminContact from "./pages/admin/contact/Contact";
 import ProfilePage from "./pages/profile/ProfilePage";
 import WatchListPage from "./pages/watch-lists/WatchListPage";
 import SearchPage from "./pages/search/SearchPage";
@@ -70,6 +71,10 @@ function App() {
           path: "movie",
           element: <AdminMovie />,
         },
+        {
+          path: "contact",
+          element: <AdminContact />,
+        }
       ],
     },
   ]);
